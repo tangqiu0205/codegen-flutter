@@ -1,0 +1,7 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  ktor_codegen_flutter:
+    build: .
+    ports:
+      - "8080:8080"
+    image: "codegen-flutter:v1.0.0"

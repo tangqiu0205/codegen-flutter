@@ -1,0 +1,75 @@
+part of {{pubName}}.api;
+
+{{#operations}}
+
+mixin {{classname}} on ApiLifeCycle {
+  late ApiClient apiClient;
+
+  String basePath = {{#basePath}}'{{basePath}}'{{/basePath}}{{^basePath}}{{#nodePath}}'{{nodePath}}'{{/nodePath}}{{^nodePath}}''{{/nodePath}}{{/basePath}};
+
+  {{#operation}}
+  /// {{summary}}
+  ///
+  /// {{notes}}
+  {{#isDeprecated}}
+  @deprecated
+  {{/isDeprecated}}
+  {{#returnType}}Future<{{{returnType}}}?> {{/returnType}}{{^returnType}}Future {{/returnType}}{{nickname}}({{#allParams}}{{#required}}{{{dataType}}} {{paramName}}{{#hasMore}}, {{/hasMore}}{{/required}}{{/allParams}}{{#hasOptionalParams}}{ {{#allParams}}{{^required}}{{{dataType}}}? {{paramName}}{{#hasMore}}, {{/hasMore}}{{/required}}{{/allParams}} }{{/hasOptionalParams}}) async {
+    Object? postBody{{#bodyParam}} = {{paramName}}{{/bodyParam}};
+
+    // create path and map variables
+    String path = "$basePath{{{path}}}".replaceAll("{format}","json"){{#pathParams}}.replaceAll("{" + "{{baseName}}" + "}", {{{paramName}}}.toString()){{/pathParams}};
+
+    // query params
+    Map<String, dynamic> queryParams = {};
+    Map<String, String> headerParams = {};
+    Map<String, String> formParams = {};
+    {{#queryParams}}
+    {{^required}}
+    if({{paramName}} != null) {
+    {{/required}}
+      queryParams["{{baseName}}"] = {{paramName}};
+    {{^required}}
+    }
+    {{/required}}
+    {{/queryParams}}
+    {{#headerParams}}headerParams["{{baseName}}"] = {{paramName}};
+    {{/headerParams}}
+
+    List<String> contentTypes = [{{#consumes}}"{{{mediaType}}}"{{#hasMore}},{{/hasMore}}{{/consumes}}];
+
+    String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
+    List<String> authTypes = [{{#authMethods}}"{{name}}"{{#hasMore}}, {{/hasMore}}{{/authMethods}}];
+
+    {{#if formParams}}
+    if (contentType.startsWith("multipart/form-data")) {
+      {{#formParams}}
+      if ({{paramName}} != null) {
+        formParams['{{baseName}}'] = {{paramName}};
+      }
+      {{/formParams}}
+    } else {
+      {{#formParams}}
+        {{#notFile}}
+      if ({{paramName}} != null) {
+        formParams['{{baseName}}'] = {{paramName}};
+      }
+        {{/notFile}}
+      {{/formParams}}
+    }
+    {{/if}}
+
+    return apiClient.invokeAPI(path,
+                             '{{httpMethod}}',
+                             queryParams,
+                             postBody,
+                             headerParams,
+                             formParams,
+                             contentType,
+                             deserializer: Api{{pubClassName}}Deserializer(),
+                             authTypes: authTypes,
+                             cancelToken: cancelToken.create());
+  }
+  {{/operation}}
+}
+{{/operations}}

@@ -1,0 +1,14 @@
+library {{pubName}}.api;
+
+import 'dart:async';
+import 'dart:convert';
+import 'package:dio/dio.dart';
+import 'package:tangqiu_api/tangqiu_api.dart';
+
+part 'api_deserializer.dart';
+{{#apiInfo}}{{#apis}}part 'api/{{classFilename}}.dart';
+{{/apis}}{{/apiInfo}}
+{{#models}}{{#model}}part 'model/{{classFilename}}.dart';
+{{/model}}{{/models}}
+
+final ApiClient defaultApiClient = new ApiClient();

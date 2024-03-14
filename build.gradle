@@ -1,0 +1,54 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.github.jengelman.gradle.plugins:shadow:6.1.0"
+    }
+}
+
+apply plugin: 'kotlin'
+apply plugin: 'application'
+apply plugin: "com.github.johnrengelman.shadow"
+
+group 'com.tangqiu.cloud'
+version '1.0.0-SNAPSHOT'
+mainClassName = "com.tangqiu.cloud.codegen.ApplicationKt"
+
+sourceSets {
+    main.kotlin.srcDirs = main.java.srcDirs = ['src']
+    main.resources.srcDirs = ['resources']
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url 'https://kotlin.bintray.com/ktor' }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation "io.ktor:ktor-server-netty:$ktor_version"
+    implementation "ch.qos.logback:logback-classic:$logback_version"
+    implementation "io.ktor:ktor-server-core:$ktor_version"
+    implementation "io.ktor:ktor-server-host-common:$ktor_version"
+    implementation "io.ktor:ktor-locations:$ktor_version"
+    implementation "io.ktor:ktor-gson:$ktor_version"
+    implementation "io.ktor:ktor-client-gson:$ktor_version"
+
+    implementation "io.ktor:ktor-client-core:$ktor_version"
+    implementation "io.ktor:ktor-client-core-jvm:$ktor_version"
+    implementation "io.ktor:ktor-client-apache:$ktor_version"
+
+    implementation group: 'io.swagger.codegen.v3', name: 'swagger-codegen', version: "$swagger_codegen_version"
+    implementation group: 'io.swagger.codegen.v3', name: 'swagger-codegen-generators', version: "1.0.25"
+}
+
+shadowJar {
+    archiveBaseName = 'app'
+    archiveClassifier = null
+    archiveVersion = null
+}

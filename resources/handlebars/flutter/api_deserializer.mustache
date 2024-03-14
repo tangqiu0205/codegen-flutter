@@ -1,0 +1,31 @@
+part of {{pubName}}.api;
+
+class Api{{pubClassName}}Deserializer extends ApiDeserializer {
+  factory Api{{pubClassName}}Deserializer() => _getInstance();
+  static Api{{pubClassName}}Deserializer get instance => _getInstance();
+  static Api{{pubClassName}}Deserializer? _instance;
+
+  Api{{pubClassName}}Deserializer._internal() {}
+
+  static Api{{pubClassName}}Deserializer _getInstance() {
+    if (_instance == null) {
+      _instance = new Api{{pubClassName}}Deserializer._internal();
+    }
+    return _instance!;
+  }
+
+  T? deserialize<T>(dynamic value) {
+      switch (T.toString()) {
+        {{#models}}
+          {{#model}}
+        case '{{classname}}':
+            return {{classname}}.fromJson(value) as T;
+        case 'List<{{classname}}>':
+            return {{classname}}.listFromJson(value) as T;
+          {{/model}}
+        {{/models}}
+        default:
+            return null;
+      }
+  }
+}
