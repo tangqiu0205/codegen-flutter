@@ -1,1 +1,1 @@
-通过swagger文件生成flutter代码
+通过swagger文件生成flutter代码.
